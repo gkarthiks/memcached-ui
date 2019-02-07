@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: memcached-ui
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: memcached-ui
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: memcached-ui
+    spec:
+      containers:
+        - env:
+          - name: WEB_PORT
+            value: '3000'
+          - name: CACHE_ADDRESS
+            value: 'memcachedaddress'
+          image: gkarthics/memcached-ui
+          imagePullPolicy: IfNotPresent
+          name: memcached-ui
+          ports:
+            - containerPort: 3000
+              name: memcached-ui
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 50m
+              memory: 256Mi
+            requests:
+              cpu: 50m
+              memory: 256Mi
+      securityContext: {}
